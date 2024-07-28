@@ -9,10 +9,14 @@ import SwiftUI
 
 @main
 struct CowsAndBullsApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
-        }
-        .windowResizability(.contentSize)
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
     }
+    .windowResizability(.contentSize)
+    
+    Settings {
+      SettingsView.init()
+    }
+  }
 }

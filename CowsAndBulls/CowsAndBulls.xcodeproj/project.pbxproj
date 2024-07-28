@@ -11,6 +11,7 @@
 		F6A882112C553DE6008F0F10 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A882102C553DE6008F0F10 /* ContentView.swift */; };
 		F6A882132C553DE8008F0F10 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6A882122C553DE8008F0F10 /* Assets.xcassets */; };
 		F6A882162C553DE8008F0F10 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F6A882152C553DE8008F0F10 /* Preview Assets.xcassets */; };
+		F6B71BD72C566AA000A9F599 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B71BD62C566AA000A9F599 /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,6 +21,7 @@
 		F6A882122C553DE8008F0F10 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F6A882152C553DE8008F0F10 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		F6A882172C553DE8008F0F10 /* CowsAndBulls.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CowsAndBulls.entitlements; sourceTree = "<group>"; };
+		F6B71BD62C566AA000A9F599 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 			children = (
 				F6A8820E2C553DE6008F0F10 /* CowsAndBullsApp.swift */,
 				F6A882102C553DE6008F0F10 /* ContentView.swift */,
+				F6B71BD62C566AA000A9F599 /* SettingsView.swift */,
 				F6A882122C553DE8008F0F10 /* Assets.xcassets */,
 				F6A882172C553DE8008F0F10 /* CowsAndBulls.entitlements */,
 				F6A882142C553DE8008F0F10 /* Preview Content */,
@@ -139,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6B71BD72C566AA000A9F599 /* SettingsView.swift in Sources */,
 				F6A882112C553DE6008F0F10 /* ContentView.swift in Sources */,
 				F6A8820F2C553DE6008F0F10 /* CowsAndBullsApp.swift in Sources */,
 			);

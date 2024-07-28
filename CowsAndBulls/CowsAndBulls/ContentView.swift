@@ -8,12 +8,17 @@
 import SwiftUI
 
 struct ContentView: View {
-  let guesses = Array(repeating: "1234", count: 20)
+  let answerLength = 4
+  
+  @State private var guesses = [String]()
+  @State private var guess = ""
+  @State private var answer = ""
   
   var body: some View {
     VStack(spacing: 0) {
       HStack {
-        TextField("Enter a guess…", text: .constant("1234"))
+        TextField("Enter a guess…", text: $guess)
+          
         Button("Go", action: submitGuess)
       }
       .padding()
@@ -22,16 +27,45 @@ struct ContentView: View {
         HStack {
           Text(guess)
           Spacer()
-          Text("4c 0b")
+          Text(result(for: guess))
         }
       }
     }
     .frame(width: 250)
     .frame(minHeight: 300)
+    
+    .onAppear() {
+      startNewGame()
+    }
   }
   
   func submitGuess() {
+    if guess.count == answerLength {
+      guesses.append(guess)
+      guess = ""
+    }
     
+  }
+  
+  func result(for guess: String) -> String {
+    return "Result"
+  }
+  
+  func startNewGame() {
+    guess = ""
+    guesses.removeAll()
+    createAnswer()
+    
+  }
+  
+  func createAnswer() {
+    while true {
+      let newAnswer = (Array(0...9).shuffled().prefix(answerLength)).reduce("") { $0 + String($1) }
+      if answer != newAnswer {
+        answer = newAnswer
+        return
+      }
+    }
   }
   
 }

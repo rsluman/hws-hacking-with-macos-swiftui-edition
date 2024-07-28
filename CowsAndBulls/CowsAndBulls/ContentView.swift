@@ -19,6 +19,7 @@ struct ContentView: View {
     VStack(spacing: 0) {
       HStack {
         TextField("Enter a guess…", text: $guess)
+          .onSubmit(submitGuess)
           
         Button("Go", action: submitGuess)
       }
@@ -31,6 +32,7 @@ struct ContentView: View {
           Text(result(for: guess))
         }
       }
+      .listStyle(.sidebar)
     }
     .frame(width: 250)
     .frame(minHeight: 300)
@@ -43,6 +45,16 @@ struct ContentView: View {
       Button("OK", action: startNewGame)
     } message: {
       Text("Congratulations: click OK to play again.")
+    }
+    
+    .navigationTitle("Cows and Bulls")
+    
+    .touchBar {
+      HStack {
+        Text("Guesses: \(guesses.count)")
+          .touchBarItemPrincipal()
+        Spacer(minLength: 200)
+      }
     }
     
   }

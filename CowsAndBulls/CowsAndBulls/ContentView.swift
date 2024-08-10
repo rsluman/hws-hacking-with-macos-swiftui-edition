@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
-  let answerLength = 4
-  
+  @AppStorage("maximumGuesses") var maximumGuesses = 100
+  @AppStorage("answerLength") var answerLength = 4
+  @AppStorage("shouldEnableHardMode") var shouldEnableHardMode = false
+  @AppStorage("shouldShowGuessCount") var shouldShowGuessCount = false
+
   @State private var guesses = [String]()
   @State private var guess = ""
   @State private var answer = ""
@@ -25,14 +28,23 @@ struct ContentView: View {
       }
       .padding()
       
-      List(guesses, id: \.self) { guess in
+      List(0..<guesses.count, id: \.self) { index in
+        let guess = guesses[index]
+        let shouldShowResult = shouldEnableHardMode == false || (shouldEnableHardMode && index == 0)
+        
         HStack {
           Text(guess)
           Spacer()
-          Text(result(for: guess))
+          if shouldShowResult {
+            Text(result(for: guess))
+          }
         }
       }
       .listStyle(.sidebar)
+      
+      if shouldShowGuessCount {
+        Text("Guesses: \(guesses.count) / \(maximumGuesses)")
+      }
     }
     .frame(width: 250)
     .frame(minHeight: 300)
@@ -40,6 +52,8 @@ struct ContentView: View {
     .onAppear() {
       startNewGame()
     }
+    
+    .onChange(of: answerLength, startNewGame)
     
     .alert("You win!", isPresented: $isGameOver) {
       Button("OK", action: startNewGame)
@@ -93,6 +107,7 @@ struct ContentView: View {
   }
   
   func startNewGame() {
+    guard answerLength > 3 && answerLength <= 8 else { return }
     guess = ""
     guesses.removeAll()
     createAnswer()

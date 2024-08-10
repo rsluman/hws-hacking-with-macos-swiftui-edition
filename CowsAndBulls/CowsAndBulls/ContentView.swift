@@ -107,7 +107,7 @@ struct ContentView: View {
   }
   
   func startNewGame() {
-    guard answerLength > 3 && answerLength <= 8 else { return }
+    guard answerLength >= 3 && answerLength <= 8 else { return }
     guess = ""
     guesses.removeAll()
     createAnswer()

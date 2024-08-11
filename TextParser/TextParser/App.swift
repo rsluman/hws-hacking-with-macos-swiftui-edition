@@ -10,7 +10,8 @@ import Foundation
 @main
 struct App {
   static func main() {
-    print("Hello, World!")
+    let text = CommandLine.arguments.dropFirst().joined(separator: " ")
+    print(text)
   }
 }
 

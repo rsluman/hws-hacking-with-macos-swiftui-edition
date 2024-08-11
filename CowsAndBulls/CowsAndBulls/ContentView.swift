@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-  @AppStorage("maximumGuesses") var maximumGuesses = 100
+//  @AppStorage("maximumGuesses") var maximumGuesses = 100
+  let maximumGuesses = 3
   @AppStorage("answerLength") var answerLength = 4
   @AppStorage("shouldEnableHardMode") var shouldEnableHardMode = false
   @AppStorage("shouldShowGuessCount") var shouldShowGuessCount = false
@@ -17,6 +18,7 @@ struct ContentView: View {
   @State private var guess = ""
   @State private var answer = ""
   @State private var isGameOver = false
+  @State private var hasMaximumGuesses = false
   
   var body: some View {
     VStack(spacing: 0) {
@@ -55,11 +57,18 @@ struct ContentView: View {
     
     .onChange(of: answerLength, startNewGame)
     
-    .alert("You win!", isPresented: $isGameOver) {
+    .alert(scoreTextAndTitle.title, isPresented: $isGameOver) {
       Button("OK", action: startNewGame)
     } message: {
-      Text("Congratulations: click OK to play again.")
+      Text("\(scoreTextAndTitle.text) Click OK to play again.")
     }
+    
+    .alert("Too many guesses!", isPresented: $hasMaximumGuesses) {
+      Button("OK", action: startNewGame)
+    } message : {
+      Text("You have reached the maximum number of guesses allowed.\nThe correct answer was \"\(answer)\".\nClick OK to play again.")
+    }
+    
     
     .navigationTitle("Cows and Bulls")
     
@@ -73,17 +82,36 @@ struct ContentView: View {
     
   }
   
+  var scoreTextAndTitle: (title: String, text: String) {
+    guard isGameOver else { return ("", "") }
+
+    switch guesses.count {
+    case 21...maximumGuesses:
+      return ("You win!", "Congratulations!")
+    case 10...20:
+      return ("Impressive!", "You've won in less than 20 moves!")
+    default:
+      return ("Excellent!", "You've won in less than 10 moves!")
+    }
+  }
+  
   func submitGuess() {
     guard guess.count == answerLength else { return } // four numbers
     guard Set(guess).count == answerLength else { return } // four *unique* numbers
+    guard !guesses.contains(guess) else { return } // duplicate guess
     
     let badCharacters = CharacterSet.decimalDigits.inverted
     guard guess.rangeOfCharacter(from: badCharacters) == nil else { return }
     
     guesses.insert(guess, at: 0)
     
+    // Check for maximum guesses
+    if guesses.count == maximumGuesses {
+      hasMaximumGuesses = true
+    }
+    
     // Check for win
-    if result(for: guess).contains("\(answerLength)b") {
+    if !hasMaximumGuesses && result(for: guess).contains("\(answerLength)b") {
       isGameOver = true
     } else {
       guess = ""

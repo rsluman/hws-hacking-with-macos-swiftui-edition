@@ -7,10 +7,81 @@
 
 import Foundation
 import NaturalLanguage
+import ArgumentParser
 
 @main
-struct App {
-  static func sentiment(for string: String) -> Double {
+struct App: ParsableCommand {
+  @Argument(help: "The text you want to analyze")
+  var input: [String]
+
+  @Flag(help: "Show detected language.")
+  var detectLanguage = false
+
+  @Flag(help: "Prints how positive or negative the input is.")
+  var sentimentAnalysis = false
+
+  @Flag(help: "Shows the stem form of each word in the input.")
+  var lemmatize = false
+
+  @Flag(help: "Prints alternative words for each word in the input.")
+  var alternatives = false
+
+  @Flag(help: "Prints names of people, places, and organizations in the input.")
+  var names = false
+  
+  @Option(help: "The maximum number of alternatives to suggest.")
+  var maximumAlternatives = 10
+  
+  mutating func run() {
+    let text = input.joined(separator: " ")
+    
+    if !detectLanguage && !sentimentAnalysis && !lemmatize && !alternatives && !names {
+      detectLanguage = true
+      sentimentAnalysis = true
+      lemmatize = true
+      alternatives = true
+      names = true
+    }
+    
+    if detectLanguage {
+      let language = NLLanguageRecognizer.dominantLanguage(for: text) ?? .undetermined
+      print()
+      print("Detected language: \(language.rawValue)")
+    }
+    
+    let sentiment = sentiment(for: text)
+    print("Sentiment for '\(text)': \(sentiment)")
+    
+    lazy var lemma = lemmatize(string: text)
+    
+    if lemmatize {
+      print()
+      print("Found the following lemma:")
+      print("\t", lemma.formatted(.list(type: .and)))
+    }
+    
+    if alternatives {
+      print()
+      print("Found the following alternatives:")
+      
+      for word in lemma {
+        let embeddings = embeddings(for: word)
+        print("\t\(word): ", embeddings.formatted(.list(type: .and)))
+      }
+    }
+    
+    if names {
+      let entities = entities(for: text)
+      print()
+      print("Found the following entities:")
+      
+      for entity in entities {
+        print("\t", entity)
+      }
+    }
+  }
+ 
+  func sentiment(for string: String) -> Double {
     let tagger = NLTagger(tagSchemes: [.sentimentScore])
     tagger.string = string
     let (sentiment, _) = tagger.tag(at: string.startIndex, unit: .paragraph, scheme: .sentimentScore)
@@ -21,11 +92,11 @@ struct App {
     return result
   }
   
-  static func embeddings(for word: String) -> [String] {
+  func embeddings(for word: String) -> [String] {
     var results = [String]()
     
     if let embedding = NLEmbedding.wordEmbedding(for: .english) {
-      let similarWords = embedding.neighbors(for: word, maximumCount: 10)
+      let similarWords = embedding.neighbors(for: word, maximumCount: maximumAlternatives)
       for word in similarWords {
         results.append("\(word.0) has a distance of \(word.1)")
       }
@@ -34,7 +105,7 @@ struct App {
     return results
   }
   
-  static func lemmatize(string: String) -> [String] {
+  func lemmatize(string: String) -> [String] {
     let tagger = NLTagger(tagSchemes: [.lemma])
     tagger.string = string
     
@@ -51,7 +122,7 @@ struct App {
     return results
   }
   
-  static func entities(for string: String) -> [String] {
+  func entities(for string: String) -> [String] {
     let tagger = NLTagger(tagSchemes: [.nameType])
     tagger.string = string
     var results = [String]()
@@ -76,34 +147,7 @@ struct App {
     
     return results
   }
-  
-  static func main() {
-    let text = CommandLine.arguments.dropFirst().joined(separator: " ")
-    let language = NLLanguageRecognizer.dominantLanguage(for: text) ?? .undetermined
-    print()
-    print("Detected language: \(language.rawValue)")
-    
-    let sentiment = sentiment(for: text)
-    print("Sentiment for '\(text)': \(sentiment)")
-    print()
-    print("Found the following alternatives:")
-    
-    let lemma = lemmatize(string: text)
-    
-    for word in lemma {
-      let embeddings = embeddings(for: word)
-      print("\t\(word): ", embeddings.formatted(.list(type: .and)))
-    }
-    
-    let entities = entities(for: text)
-    print()
-    print("Found the following entities:")
-    
-    for entity in entities {
-      print("\t", entity)
-    }
-    
-  }
+ 
 }
 
 

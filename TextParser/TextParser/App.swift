@@ -51,8 +51,38 @@ struct App {
     return results
   }
   
+  static func entities(for string: String) -> [String] {
+    let tagger = NLTagger(tagSchemes: [.nameType])
+    tagger.string = string
+    var results = [String]()
+    
+    tagger.enumerateTags(in: string.startIndex..<string.endIndex, unit: .word, scheme: .nameType, options: .joinNames) { tag, range in
+      guard let tag else { return true }
+      
+      let match = String(string[range])
+      
+      switch tag {
+      case .organizationName:
+        results.append("Organization: \(match)")
+      case .personalName:
+        results.append("Person: \(match)")
+      case .placeName:
+        results.append("Place: \(match)")
+      default:
+        break
+      }
+      return true
+    }
+    
+    return results
+  }
+  
   static func main() {
     let text = CommandLine.arguments.dropFirst().joined(separator: " ")
+    let language = NLLanguageRecognizer.dominantLanguage(for: text) ?? .undetermined
+    print()
+    print("Detected language: \(language.rawValue)")
+    
     let sentiment = sentiment(for: text)
     print("Sentiment for '\(text)': \(sentiment)")
     print()
@@ -64,6 +94,15 @@ struct App {
       let embeddings = embeddings(for: word)
       print("\t\(word): ", embeddings.formatted(.list(type: .and)))
     }
+    
+    let entities = entities(for: text)
+    print()
+    print("Found the following entities:")
+    
+    for entity in entities {
+      print("\t", entity)
+    }
+    
   }
 }
 

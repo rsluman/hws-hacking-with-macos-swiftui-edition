@@ -14,22 +14,22 @@ struct App: ParsableCommand {
   @Argument(help: "The text you want to analyze")
   var input: [String]
 
-  @Flag(help: "Show detected language.")
+  @Flag(name: .shortAndLong, help: "Show detected language.")
   var detectLanguage = false
 
-  @Flag(help: "Prints how positive or negative the input is.")
+  @Flag(name: .shortAndLong, help: "Prints how positive or negative the input is.")
   var sentimentAnalysis = false
 
-  @Flag(help: "Shows the stem form of each word in the input.")
+  @Flag(name: .shortAndLong, help: "Shows the stem form of each word in the input.")
   var lemmatize = false
 
-  @Flag(help: "Prints alternative words for each word in the input.")
+  @Flag(name: .shortAndLong, help: "Prints alternative words for each word in the input.")
   var alternatives = false
 
-  @Flag(help: "Prints names of people, places, and organizations in the input.")
+  @Flag(name: .shortAndLong, help: "Prints names of people, places, and organizations in the input.")
   var names = false
   
-  @Option(help: "The maximum number of alternatives to suggest.")
+  @Option(name: .shortAndLong, help: "The maximum number of alternatives to suggest.")
   var maximumAlternatives = 10
   
   mutating func run() {

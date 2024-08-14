@@ -11,6 +11,10 @@ import ArgumentParser
 
 @main
 struct App: ParsableCommand {
+  static var configuration: CommandConfiguration {
+    CommandConfiguration(commandName: "analyze", abstract: "Analyzes input text using a range of natural language approaches.")
+  }
+  
   @Argument(help: "The text you want to analyze")
   var input: [String]
 

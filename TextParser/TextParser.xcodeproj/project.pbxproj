@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F6B71C022C68B24A00A9F599 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6B71C012C68B24A00A9F599 /* App.swift */; };
+		F6B71C0A2C6CA6B900A9F599 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = F6B71C092C6CA6B900A9F599 /* ArgumentParser */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F6B71C0A2C6CA6B900A9F599 /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +80,9 @@
 			dependencies = (
 			);
 			name = TextParser;
+			packageProductDependencies = (
+				F6B71C092C6CA6B900A9F599 /* ArgumentParser */,
+			);
 			productName = TextParser;
 			productReference = F6B71BFE2C68B24A00A9F599 /* TextParser */;
 			productType = "com.apple.product-type.tool";
@@ -106,6 +111,9 @@
 				Base,
 			);
 			mainGroup = F6B71BF52C68B24A00A9F599;
+			packageReferences = (
+				F6B71C082C6CA6B900A9F599 /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+			);
 			productRefGroup = F6B71BFF2C68B24A00A9F599 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -289,6 +297,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		F6B71C082C6CA6B900A9F599 /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F6B71C092C6CA6B900A9F599 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F6B71C082C6CA6B900A9F599 /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F6B71BF62C68B24A00A9F599 /* Project object */;
 }

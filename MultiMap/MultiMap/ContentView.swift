@@ -14,27 +14,50 @@ struct ContentView: View {
       center: CLLocationCoordinate2D(latitude: 51.507222, longitude: -0.1275),
       span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)
     ))
+  
+  @State private var searchText = ""
 
-  let locations =
-  [Location(name: "London", latitude: 51.507222, longitude: -0.1275),
-   Location(name: "Glasgow", latitude: 55.8616752, longitude: -4.2546099)
-   ]
+  @State private var locations = [Location]()
 
   var body: some View {
-    Map(position: $mapCamera) {
-      ForEach(locations) { location in
-        Annotation(location.name, coordinate: location.coordinate) {
-          Text(location.name)
-            .font(.headline)
-            .padding(5)
-            .padding(.horizontal, 5)
-            .background(.black)
-            .foregroundStyle(.white)
-            .clipShape(.capsule)
+    VStack {
+      HStack {
+        TextField("Search for something…", text: $searchText)
+          .onSubmit(runSearch)
+        
+        Button("Go", action: runSearch)
+      }
+      .padding([.top, .horizontal])
+
+      Map(position: $mapCamera) {
+        ForEach(locations) { location in
+          Annotation(location.name, coordinate: location.coordinate) {
+            Text(location.name)
+              .font(.headline)
+              .padding(5)
+              .padding(.horizontal, 5)
+              .background(.black)
+              .foregroundStyle(.white)
+              .clipShape(.capsule)
+          }
         }
       }
     }
-    
+  }
+  
+  func runSearch() {
+    Task {
+      let searchRequest = MKLocalSearch.Request()
+      searchRequest.naturalLanguageQuery = searchText
+      
+      let search = MKLocalSearch(request: searchRequest)
+      let response = try await search.start()
+      guard let item = response.mapItems.first else { return }
+      
+      guard let itemName = item.name, let itemLocation = item.placemark.location else { return }
+      
+      locations.append(Location(name: itemName, latitude: itemLocation.coordinate.latitude, longitude: itemLocation.coordinate.longitude))
+    }
   }
 }
 

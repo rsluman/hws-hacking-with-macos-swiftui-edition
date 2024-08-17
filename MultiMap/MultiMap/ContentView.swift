@@ -16,10 +16,10 @@ struct ContentView: View {
     ))
   
   @State private var searchText = ""
-
+  
   @State private var locations = [Location]()
   @State private var selectedLocations = Set<Location>()
-
+  
   var body: some View {
     NavigationSplitView {
       List(locations, id: \.self, selection: $selectedLocations) { location in
@@ -27,30 +27,24 @@ struct ContentView: View {
       }
       .frame(width: 200)
     } detail: {
-      VStack {
-        HStack {
-          TextField("Search for something…", text: $searchText)
-            .onSubmit(runSearch)
-          
-          Button("Go", action: runSearch)
-        }
-        .padding([.top, .horizontal])
-        
-        Map(position: $mapCamera) {
-          ForEach(locations) { location in
-            Annotation(location.name, coordinate: location.coordinate) {
-              Text(location.name)
-                .font(.headline)
-                .padding(5)
-                .padding(.horizontal, 5)
-                .background(.black)
-                .foregroundStyle(.white)
-                .clipShape(.capsule)
-            }
+      Map(position: $mapCamera) {
+        ForEach(locations) { location in
+          Annotation(location.name, coordinate: location.coordinate) {
+            Text(location.name)
+              .font(.headline)
+              .padding(5)
+              .padding(.horizontal, 5)
+              .background(.black)
+              .foregroundStyle(.white)
+              .clipShape(.capsule)
           }
         }
       }
+      .ignoresSafeArea()
     }
+    .searchable(text: $searchText, placement: .sidebar)
+    .onSubmit(of: .search, runSearch)
+    
     .onChange(of: selectedLocations) {
       var visibleMap = MKMapRect.null
       for location in selectedLocations {

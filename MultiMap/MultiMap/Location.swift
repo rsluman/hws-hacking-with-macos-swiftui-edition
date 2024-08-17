@@ -16,4 +16,10 @@ struct Location: Hashable, Identifiable {
   var coordinate: CLLocationCoordinate2D {
     CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
   }
+  
+  // MARK: - Hashable
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
+  
 }

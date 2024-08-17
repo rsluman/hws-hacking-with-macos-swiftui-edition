@@ -18,30 +18,50 @@ struct ContentView: View {
   @State private var searchText = ""
 
   @State private var locations = [Location]()
+  @State private var selectedLocations = Set<Location>()
 
   var body: some View {
-    VStack {
-      HStack {
-        TextField("Search for something…", text: $searchText)
-          .onSubmit(runSearch)
-        
-        Button("Go", action: runSearch)
+    NavigationSplitView {
+      List(locations, id: \.self, selection: $selectedLocations) { location in
+        Text(location.name)
       }
-      .padding([.top, .horizontal])
-
-      Map(position: $mapCamera) {
-        ForEach(locations) { location in
-          Annotation(location.name, coordinate: location.coordinate) {
-            Text(location.name)
-              .font(.headline)
-              .padding(5)
-              .padding(.horizontal, 5)
-              .background(.black)
-              .foregroundStyle(.white)
-              .clipShape(.capsule)
+      .frame(width: 200)
+    } detail: {
+      VStack {
+        HStack {
+          TextField("Search for something…", text: $searchText)
+            .onSubmit(runSearch)
+          
+          Button("Go", action: runSearch)
+        }
+        .padding([.top, .horizontal])
+        
+        Map(position: $mapCamera) {
+          ForEach(locations) { location in
+            Annotation(location.name, coordinate: location.coordinate) {
+              Text(location.name)
+                .font(.headline)
+                .padding(5)
+                .padding(.horizontal, 5)
+                .background(.black)
+                .foregroundStyle(.white)
+                .clipShape(.capsule)
+            }
           }
         }
       }
+    }
+    .onChange(of: selectedLocations) {
+      var visibleMap = MKMapRect.null
+      for location in selectedLocations {
+        let mapPoint = MKMapPoint(location.coordinate)
+        let pointRect = MKMapRect(x: mapPoint.x - 100_000, y: mapPoint.y - 100_000, width: 200_000, height: 200_000)
+        visibleMap = visibleMap.union(pointRect)
+      }
+      var newRegion = MKCoordinateRegion(visibleMap)
+      newRegion.span.latitudeDelta *= 1.5
+      newRegion.span.longitudeDelta *= 1.5
+      mapCamera = .region(newRegion)
     }
   }
   
@@ -56,7 +76,10 @@ struct ContentView: View {
       
       guard let itemName = item.name, let itemLocation = item.placemark.location else { return }
       
-      locations.append(Location(name: itemName, latitude: itemLocation.coordinate.latitude, longitude: itemLocation.coordinate.longitude))
+      let newLocation = Location(name: itemName, latitude: itemLocation.coordinate.latitude, longitude: itemLocation.coordinate.longitude)
+      
+      locations.append(newLocation)
+      selectedLocations.insert(newLocation) // possible bug: selectedLocations = [newLocation]
     }
   }
 }

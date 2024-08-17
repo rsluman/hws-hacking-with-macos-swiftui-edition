@@ -15,7 +15,7 @@ struct ContentView: View {
       span: MKCoordinateSpan(latitudeDelta: 1, longitudeDelta: 1)
     ))
   
-  @State private var searchText = ""
+  @AppStorage("searchText") private var searchText = ""
   
   @State private var locations = [Location]()
   @State private var selectedLocations = Set<Location>()
@@ -24,6 +24,11 @@ struct ContentView: View {
     NavigationSplitView {
       List(locations, id: \.self, selection: $selectedLocations) { location in
         Text(location.name)
+          .contextMenu {
+            Button("Delete", role: .destructive) {
+              delete(location)
+            }
+          }
       }
       .frame(width: 200)
     } detail: {
@@ -42,6 +47,15 @@ struct ContentView: View {
       }
       .ignoresSafeArea()
     }
+    .onDeleteCommand {
+      print("Deleting...")
+      for location in selectedLocations {
+        delete(location)
+      }
+    }
+
+
+    
     .searchable(text: $searchText, placement: .sidebar)
     .onSubmit(of: .search, runSearch)
     
@@ -55,7 +69,9 @@ struct ContentView: View {
       var newRegion = MKCoordinateRegion(visibleMap)
       newRegion.span.latitudeDelta *= 1.5
       newRegion.span.longitudeDelta *= 1.5
-      mapCamera = .region(newRegion)
+      withAnimation {
+        mapCamera = .region(newRegion)
+      }
     }
   }
   
@@ -74,7 +90,16 @@ struct ContentView: View {
       
       locations.append(newLocation)
       selectedLocations.insert(newLocation) // possible bug: selectedLocations = [newLocation]
+      
+      searchText = ""
     }
+  }
+  
+  func delete(_ location: Location) {
+    guard let index = locations.firstIndex(of: location) else { return }
+    
+    locations.remove(at: index)
+    selectedLocations.remove(location)
   }
 }
 
